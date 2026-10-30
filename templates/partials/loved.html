@@ -1,0 +1,16 @@
+{% from "partials/card.html" import card, feature %}
+<div class="loved-inner" data-ready="{{ 'true' if loved_ready else 'false' }}">
+  {% if not loved_ready %}
+    <div class="notice">
+      <strong>Still building this list.</strong>
+      The first run scans TVmaze's catalogue ({{ scanned }} pages so far) and takes a few minutes.
+      This section updates by itself, and after that it loads instantly.
+    </div>
+  {% endif %}
+  <div class="podium">
+    {% for s in loved[:3] %}{{ feature(s, loop.index) }}{% endfor %}
+  </div>
+  <div class="grid">
+    {% for s in loved[3:] %}{{ card(s, loop.index + 3) }}{% endfor %}
+  </div>
+</div>

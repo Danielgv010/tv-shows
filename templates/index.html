@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% from "partials/card.html" import card %}
+
+{% block content %}
+  {% set hero = trending[0] if trending else None %}
+  {% set period = 'today' if window == 'day' else 'this week' %}
+
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('index') }}">What to watch</a>
+    <nav class="toggle" aria-label="Trending period">
+      <a href="{{ url_for('index', window='day') }}" {% if window == 'day' %}aria-current="true"{% endif %}>Today</a>
+      <a href="{{ url_for('index', window='week') }}" {% if window == 'week' %}aria-current="true"{% endif %}>This week</a>
+    </nav>
+  </header>
+
+  {% if trending_error %}
+    <div class="notice"><strong>Couldn't load trending shows.</strong> Check your internet connection and reload the page.</div>
+  {% endif %}
+
+  {% if hero %}
+    <section class="hero" aria-labelledby="hero-title"{% if hero.poster %} style="--hero-img: url('{{ hero.poster }}')"{% endif %}>
+      <div class="hero-text">
+        <span class="chip">No. 1 trending {{ period }}</span>
+        <h1 id="hero-title">{{ hero.name }}</h1>
+        <p class="hero-meta">
+          {% if hero.network %}<span>{{ hero.network }}</span>{% endif %}
+          {% if hero.year %}<span>{{ hero.year }}</span>{% endif %}
+          {% if hero.genres %}<span>{{ hero.genres[:3]|join(", ") }}</span>{% endif %}
+          {% if hero.rating %}<span class="rating">★ {{ hero.rating }}</span>{% endif %}
+        </p>
+        {% if hero.summary %}<p class="hero-summary">{{ hero.summary }}</p>{% endif %}
+        <a class="btn" href="{{ hero.url }}" target="_blank" rel="noopener">Open on TVmaze</a>
+      </div>
+      {% set img = hero.poster_large or hero.poster %}
+      {% if img %}<img class="hero-poster" src="{{ img }}" alt="Poster for {{ hero.name }}">{% endif %}
+    </section>
+  {% endif %}
+
+  {% if trending|length > 1 %}
+    <section aria-labelledby="trending-h">
+      <h2 id="trending-h">Also trending</h2>
+      <p class="hint">Popular shows that {% if window == 'day' %}aired today{% else %}aired in the last 7 days{% endif %}, on TV and streaming.</p>
+      <div class="row-wrap">
+        <button class="row-nav prev" type="button" data-row-nav="-1" aria-label="Scroll left">‹</button>
+        <div class="row" data-row>
+          {% for s in trending[1:] %}{{ card(s) }}{% endfor %}
+        </div>
+        <button class="row-nav next" type="button" data-row-nav="1" aria-label="Scroll right">›</button>
+      </div>
+    </section>
+  {% endif %}
+{% endblock %}

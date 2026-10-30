@@ -1,0 +1,12 @@
+{# Compact show card. Pass rank to put a ranking number on the poster. #}
+{% macro card(s, rank=None) %}
+<a class="show" href="{{ s.url }}" target="_blank" rel="noopener">
+  <div class="thumb">
+    {% if rank %}<span class="rank" aria-label="Rank {{ rank }}">{{ rank }}</span>{% endif %}
+    {% if s.poster %}<img class="poster" src="{{ s.poster }}" alt="" loading="lazy">
+    {% else %}<div class="poster none">{{ s.name }}</div>{% endif %}
+  </div>
+  <p class="title">{{ s.name }}</p>
+  <span class="meta">{{ s.year }} {% if s.rating %}<span class="rating">★ {{ s.rating }}</span>{% endif %}</span>
+</a>
+{% endmacro %}
